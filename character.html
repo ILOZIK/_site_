@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вікторина про Шрека</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#43a047,#8bc34a);
+}
+
+.card{
+    background:white;
+    width:90%;
+    max-width:500px;
+    padding:40px;
+    border-radius:25px;
+    text-align:center;
+    box-shadow:0 15px 35px rgba(0,0,0,0.2);
+}
+
+h1{
+    color:#43a047;
+    margin-bottom:15px;
+}
+
+p{
+    color:#555;
+    margin-bottom:25px;
+    font-size:18px;
+}
+
+input{
+    width:100%;
+    padding:15px;
+    border:2px solid #ddd;
+    border-radius:12px;
+    font-size:16px;
+    outline:none;
+    transition:0.3s;
+}
+
+input:focus{
+    border-color:#43a047;
+}
+
+button{
+    margin-top:20px;
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:#43a047;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#388e3c;
+}
+
+#result{
+    margin-top:20px;
+    font-size:20px;
+    font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h1>🧅 Вікторина про Шрека</h1>
+
+    <p>Як звуть головного героя мультфільму "Шрек"?</p>
+
+    <input type="text" id="characterName" placeholder="Введіть відповідь">
+
+    <button onclick="checkAnswer()">Перевірити</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+function checkAnswer() {
+    let characterName = document.getElementById("characterName").value;
+    let result = document.getElementById("result");
+
+    if (characterName === "Шрек") {
+        result.textContent = "✅ Ти правий!";
+        result.style.color = "green";
+    } else {
+        result.textContent = "❌ Ти не правий!";
+        result.style.color = "red";
+    }
+}
+</script>
+
+</body>
+</html>

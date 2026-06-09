@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Аналіз числа</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      width: 320px;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a2e;
+      margin-bottom: 1rem;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus { border-color: #6c63ff; }
+
+    button {
+      padding: 10px 16px;
+      background: #6c63ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover { background: #574fd6; }
+
+    .stats {
+      margin-top: 1.25rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .stat {
+      background: #f7f7fb;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Аналіз числа</h2>
+    <div class="row">
+      <input type="number" id="numInput" placeholder="Введіть число" />
+      <button onclick="analyze()">OK</button>
+    </div>
+    <div class="stats" id="stats" style="display:none;"></div>
+  </div>
+
+  <script>
+    function analyze() {
+      const val = document.getElementById("numInput").value.trim();
+      const stats = document.getElementById("stats");
+      if (!val) return;
+
+      const digits = val.replace("-", "").split("").map(Number);
+      const even = digits.filter(d => d % 2 === 0).length;
+      const odd  = digits.filter(d => d % 2 !== 0).length;
+      const sum  = digits.reduce((a, b) => a + b, 0);
+
+      const items = [
+        { label: "Кількість цифр", value: digits.length },
+        { label: "Парних цифр",    value: even },
+        { label: "Непарних цифр",  value: odd  },
+        { label: "Сума цифр",      value: sum  }
+      ];
+
+      stats.style.display = "grid";
+      stats.innerHTML = items.map(i => `
+        <div class="stat">
+          <div class="stat-label">${i.label}</div>
+          <div class="stat-value">${i.value}</div>
+        </div>
+      `).join("");
+    }
+
+    document.getElementById("numInput").addEventListener("keydown", e => {
+      if (e.key === "Enter") analyze();
+    });
+  </script>
+</body>
+</html>

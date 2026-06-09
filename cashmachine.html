@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Банкомат</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        min-height: 100vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 60px;
+    }
+
+    .atm {
+        width: 380px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .atm-top {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+        margin-bottom: 15px;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 2px solid #ddd;
+        font-size: 16px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 8px;
+        background: #4facfe;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    #error {
+        color: red;
+        font-size: 14px;
+        min-height: 18px;
+        margin-bottom: 5px;
+    }
+
+    #moneyBox {
+        margin-top: 15px;
+        width: 100%;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+
+        background: white;
+        padding: 15px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+
+    .bill {
+        width: 250px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+
+        opacity: 0;
+        transform: translateY(-100px);
+        animation: drop 0.5s forwards;
+    }
+
+    @keyframes drop {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="atm">
+
+    <div class="atm-top">
+
+        <h2>🏧 Банкомат</h2>
+
+        <input type="number" id="money" placeholder="Введіть суму">
+
+        <div id="error"></div>
+
+        <button onclick="withdraw()">Зняти гроші</button>
+
+        <button id="takeMoney" style="display:none;">
+            Забрати гроші
+        </button>
+
+    </div>
+
+    <div id="moneyBox"></div>
+
+</div>
+
+<script>
+
+let bills = [];
+
+const billImages = {
+    50: "image/50.jpg",
+    100: "image/100.jpg",
+    200: "image/200.jpg",
+    500: "image/500.jpg",
+    1000: "image/1000.jpg"
+};
+
+// БАГ 2 ВИПРАВЛЕНО: список номіналів від більшого до меншого як константа
+const DENOMINATIONS = [1000, 500, 200, 100, 50];
+
+function showError(msg) {
+    document.getElementById("error").textContent = msg;
+}
+
+function withdraw() {
+
+    let input = document.getElementById("money").value;
+
+    let box = document.getElementById("moneyBox");
+    box.innerHTML = "";
+    box.style.display = "none";
+
+    document.getElementById("takeMoney").style.display = "none";
+
+    showError("");
+
+    // БАГ 2 ВИПРАВЛЕНО: перевірка на порожнє поле
+    if (input === "" || input === null) {
+        showError("Введіть суму");
+        return;
+    }
+
+    let money = +input;
+
+    if (money < 50 || money > 3000) {
+        showError("Сума повинна бути від 50 до 3000 грн");
+        return;
+    }
+
+    if (money % 50 !== 0) {
+        showError("Немає таких купюр");
+        return;
+    }
+
+    bills = [];
+    let amount = money;
+
+    // БАГ 1 ВИПРАВЛЕНО: використовуємо цикл по масиву номіналів
+    // замість окремих while-блоків, де порядок міг спричиняти помилку
+    for (let denomination of DENOMINATIONS) {
+        while (amount >= denomination) {
+            bills.push(denomination);
+            amount -= denomination;
+        }
+    }
+
+    document.getElementById("takeMoney").style.display = "block";
+}
+
+document.getElementById("takeMoney").addEventListener("click", function () {
+
+    let box = document.getElementById("moneyBox");
+    box.innerHTML = "";
+    box.style.display = "flex";
+
+    let i = 0;
+
+    function showNext() {
+
+        if (i >= bills.length) return;
+
+        let img = document.createElement("img");
+        img.src = billImages[bills[i]];
+        img.className = "bill";
+
+        box.appendChild(img);
+
+        i++;
+
+        setTimeout(showNext, 400);
+    }
+
+    showNext();
+});
+
+</script>
+
+</body>
+</html>

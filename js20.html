@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Пори року</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      width: 320px;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a2e;
+      margin-bottom: 1rem;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus { border-color: #6c63ff; }
+
+    button {
+      padding: 10px 16px;
+      background: #6c63ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover { background: #574fd6; }
+
+    .error {
+      font-size: 13px;
+      color: #e05252;
+      margin-top: 8px;
+      min-height: 18px;
+    }
+
+    .result {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f7f7fb;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 600;
+      color: #1a1a2e;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Номер місяця (1–12)</h2>
+    <div class="row">
+      <input type="number" id="m" min="1" max="12" placeholder="наприклад, 7" />
+      <button onclick="check()">OK</button>
+    </div>
+    <p class="error" id="err"></p>
+    <div class="result" id="res"></div>
+  </div>
+
+  <script>
+    const map = [
+      { months: [12,1,2],  label: "❄️ Зима"  },
+      { months: [3,4,5],   label: "🌸 Весна" },
+      { months: [6,7,8],   label: "☀️ Літо"  },
+      { months: [9,10,11], label: "🍂 Осінь" }
+    ];
+
+    function check() {
+      const val = parseInt(document.getElementById("m").value);
+      const err = document.getElementById("err");
+      const res = document.getElementById("res");
+
+      if (!val || val < 1 || val > 12) {
+        err.textContent = "Введіть число від 1 до 12";
+        res.style.display = "none";
+        return;
+      }
+
+      err.textContent = "";
+      res.textContent = map.find(s => s.months.includes(val)).label;
+      res.style.display = "block";
+    }
+
+    document.getElementById("m").addEventListener("keydown", e => {
+      if (e.key === "Enter") check();
+    });
+  </script>
+</body>
+</html>

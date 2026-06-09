@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Сходинки</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 0.25rem;
+    }
+
+    .sub {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+      color: #1a1a2e;
+      transition: border-color 0.2s;
+      margin-bottom: 1rem;
+    }
+
+    input:focus { border-color: #4f8ef7; }
+
+    button.build {
+      width: 100%;
+      padding: 12px;
+      background: #4f8ef7;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button.build:hover { background: #3a7ae0; }
+
+    .result { margin-top: 1.5rem; }
+
+    pre {
+      background: #f7f8fb;
+      border: 1px solid #e4e8f0;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      font-family: monospace;
+      font-size: 16px;
+      line-height: 1.4;
+      color: #1a1a2e;
+      overflow-x: auto;
+    }
+
+    button.reset {
+      margin-top: 1rem;
+      width: 100%;
+      padding: 10px;
+      background: none;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #777;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button.reset:hover { border-color: #4f8ef7; color: #4f8ef7; }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Сходинки / Трикутник</h1>
+    <p class="sub">Побудуйте трикутник із будь-якого символу</p>
+
+    <label>Символ</label>
+    <input type="text" id="symbol" maxlength="2" placeholder="Наприклад: * або █" />
+
+    <label>Висота</label>
+    <input type="number" id="height" min="1" max="30" placeholder="Наприклад: 8" />
+
+    <button class="build" onclick="build()">Побудувати</button>
+
+    <div class="result hidden" id="result">
+      <pre id="triangle"></pre>
+      <button class="reset" onclick="reset()">Побудувати новий</button>
+    </div>
+  </div>
+
+  <script>
+    function build() {
+      const symbol = document.getElementById("symbol").value.trim() || "*";
+      const height = Math.min(30, Math.max(1, parseInt(document.getElementById("height").value) || 8));
+
+      let output = "";
+      for (let i = 1; i <= height; i++) {
+        output += symbol.repeat(i) + "\n";
+      }
+
+      document.getElementById("triangle").textContent = output;
+      document.getElementById("result").classList.remove("hidden");
+    }
+
+    function reset() {
+      document.getElementById("symbol").value = "";
+      document.getElementById("height").value = "";
+      document.getElementById("result").classList.add("hidden");
+      document.getElementById("symbol").focus();
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Enter") build();
+    });
+  </script>
+</body>
+</html>

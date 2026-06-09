@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Перевірка на спам</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      padding: 2rem;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 0.25rem;
+    }
+
+    .sub {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 14px;
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s;
+      color: #1a1a2e;
+    }
+
+    textarea:focus { border-color: #4f8ef7; }
+
+    button.check {
+      margin-top: 1rem;
+      width: 100%;
+      padding: 12px;
+      background: #4f8ef7;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button.check:hover { background: #3a7ae0; }
+
+    .result { margin-top: 1.5rem; }
+
+    .status {
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .status.spam {
+      background: #fff1f1;
+      color: #c0392b;
+      border: 1px solid #f5c6c6;
+    }
+
+    .status.clean {
+      background: #f0faf4;
+      color: #27ae60;
+      border: 1px solid #b7e4c7;
+    }
+
+    .words {
+      margin-top: 1rem;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .words span {
+      display: inline-block;
+      margin: 3px 4px 3px 0;
+      padding: 3px 10px;
+      background: #fff1f1;
+      color: #c0392b;
+      border-radius: 20px;
+      font-size: 12px;
+      border: 1px solid #f5c6c6;
+    }
+
+    button.reset {
+      margin-top: 1rem;
+      width: 100%;
+      padding: 10px;
+      background: none;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #777;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button.reset:hover { border-color: #4f8ef7; color: #4f8ef7; }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Перевірка на спам</h1>
+    <p class="sub">Вставте текст — знайдемо підозрілі слова</p>
+
+    <label>Текст для перевірки</label>
+    <textarea id="text" rows="6" placeholder="Вставте сюди текст..."></textarea>
+    <button class="check" onclick="check()">Перевірити</button>
+
+    <div class="result hidden" id="result">
+      <div class="status" id="status"></div>
+      <div class="words" id="words"></div>
+      <button class="reset" onclick="reset()">Перевірити інший текст</button>
+    </div>
+  </div>
+
+  <script>
+    const spamWords = [
+      "buy now", "free money", "виграш", "клікни", "казино",
+      "крипта", "інвестиції", "гарантія", "швидко", "дешево",
+      "реклама", "100%", "безкоштовно", "терміново"
+    ];
+
+    function check() {
+      const text = document.getElementById("text").value.trim();
+      if (!text) return;
+
+      const lower = text.toLowerCase();
+      const found = spamWords.filter(w => lower.includes(w));
+
+      const result = document.getElementById("result");
+      const status = document.getElementById("status");
+      const words  = document.getElementById("words");
+
+      if (found.length > 0) {
+        status.className = "status spam";
+        status.textContent = "⚠️ Спам виявлено!";
+        words.innerHTML = "<div style='margin-bottom:6px;'>Підозрілі слова:</div>" +
+          found.map(w => `<span>${w}</span>`).join("");
+      } else {
+        status.className = "status clean";
+        status.textContent = "✅ Текст чистий";
+        words.innerHTML = "";
+      }
+
+      result.classList.remove("hidden");
+    }
+
+    function reset() {
+      document.getElementById("text").value = "";
+      document.getElementById("result").classList.add("hidden");
+      document.getElementById("text").focus();
+    }
+
+    document.getElementById("text").addEventListener("keydown", e => {
+      if (e.key === "Enter" && e.ctrlKey) check();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Генератор компліментів</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f3ff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 40px 36px 32px;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 2px 16px rgba(99,102,241,.10), 0 0 0 1px rgba(99,102,241,.07);
+    }
+
+    .icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #9ca3af;
+      margin-bottom: 28px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    input[type="number"] {
+      flex: 1;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      color: #111827;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color .2s;
+      -moz-appearance: textfield;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    input[type="number"]:focus { border-color: #6366f1; }
+    input[type="number"]::placeholder { color: #d1d5db; }
+
+    button.gen-btn {
+      background: #6366f1;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 0 22px;
+      transition: background .15s, transform .1s;
+      white-space: nowrap;
+    }
+    button.gen-btn:hover  { background: #4f46e5; }
+    button.gen-btn:active { transform: scale(.97); }
+
+    .list { display: flex; flex-direction: column; gap: 8px; }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #faf9ff;
+      border: 1px solid #ede9fe;
+      border-radius: 12px;
+      padding: 12px 16px;
+      animation: fadeIn .25s ease both;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .num {
+      font-size: 12px;
+      font-weight: 600;
+      color: #a78bfa;
+      min-width: 20px;
+      text-align: right;
+    }
+
+    .text {
+      font-size: 15px;
+      color: #1f2937;
+    }
+
+    .text em {
+      font-style: normal;
+      font-weight: 600;
+      color: #6366f1;
+    }
+
+    .empty {
+      text-align: center;
+      color: #d1d5db;
+      font-size: 14px;
+      padding: 20px 0;
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">✨</div>
+  <h1>Генератор компліментів</h1>
+  <p class="subtitle">Введи кількість — отримай порцію добрих слів</p>
+
+  <div class="input-row">
+    <input type="number" id="numValue" placeholder="Скільки компліментів?" min="1">
+    <button class="gen-btn" onclick="generate()">Згенерувати</button>
+  </div>
+
+  <div id="out"></div>
+</div>
+
+<script>
+  const compliments = [
+    'cute','perfect','wonderful','smart','clever','awesome','brave',
+    'kind','strong','amazing','sweet','brilliant','friendly','talented',
+    'happy','lovely','charming','unique','fantastic','cool','great',
+    'nice','beautiful','generous','creative','positive','gentle',
+    'funny','honest','bright'
+  ];
+
+  function generate() {
+    const n = parseInt(document.getElementById('numValue').value, 10);
+    const out = document.getElementById('out');
+
+    if (!n || n < 1) {
+      out.innerHTML = '<p class="empty">Введи число від 1</p>';
+      return;
+    }
+
+    // For very large numbers, cap animation delay to avoid performance issues
+    const animCap = 200;
+
+    const items = Array.from({ length: n }, (_, i) => {
+      const word = compliments[Math.floor(Math.random() * compliments.length)];
+      const delay = i < animCap ? i * 40 : 0;
+      return `<div class="item" style="animation-delay:${delay}ms">
+        <span class="num">${i + 1}</span>
+        <span class="text">You are so <em>${word}</em></span>
+      </div>`;
+    });
+
+    out.innerHTML = `<div class="list">${items.join('')}</div>`;
+  }
+
+  document.getElementById('numValue').addEventListener('keydown', e => {
+    if (e.key === 'Enter') generate();
+  });
+</script>
+</body>
+</html>

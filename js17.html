@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вгадай число</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0d0f14;
+      --surface:  #161a24;
+      --border:   #232840;
+      --accent:   #5b8cff;
+      --accent2:  #a78bfa;
+      --text:     #e8eaf6;
+      --muted:    #6b7280;
+      --success:  #34d399;
+      --warn:     #f59e0b;
+      --error:    #f87171;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px 40px 40px;
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(91,140,255,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 36px;
+    }
+
+    /* Range visual */
+    .range-bar {
+      position: relative;
+      height: 6px;
+      background: var(--border);
+      border-radius: 99px;
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+    .range-fill {
+      position: absolute;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 99px;
+      transition: left .4s ease, right .4s ease;
+    }
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+      font-family: 'Space Mono', monospace;
+    }
+
+    /* Input row */
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    input[type="number"] {
+      flex: 1;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      padding: 14px 18px;
+      outline: none;
+      transition: border-color .2s;
+      -moz-appearance: textfield;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    input[type="number"]:focus { border-color: var(--accent); }
+
+    button.guess-btn {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 22px;
+      transition: opacity .15s, transform .1s;
+    }
+    button.guess-btn:hover  { opacity: .88; }
+    button.guess-btn:active { transform: scale(.97); }
+    button.guess-btn:disabled { opacity: .35; cursor: default; }
+
+    /* Hint */
+    .hint-box {
+      min-height: 52px;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      background: transparent;
+      border: 1.5px solid transparent;
+      transition: all .3s ease;
+    }
+    .hint-box.higher  { border-color: var(--warn);    color: var(--warn);    background: rgba(245,158,11,.08); }
+    .hint-box.lower   { border-color: var(--accent);  color: var(--accent);  background: rgba(91,140,255,.08); }
+    .hint-box.win     { border-color: var(--success);  color: var(--success);  background: rgba(52,211,153,.08); }
+    .hint-box.invalid { border-color: var(--error);   color: var(--error);   background: rgba(248,113,113,.08); }
+
+    /* History */
+    .history-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-family: 'Space Mono', monospace;
+      letter-spacing: .06em;
+    }
+    .history {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-height: 28px;
+    }
+    .chip {
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      padding: 3px 10px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .chip.high { border-color: rgba(245,158,11,.4); color: var(--warn); }
+    .chip.low  { border-color: rgba(91,140,255,.4);  color: var(--accent); }
+    .chip.win  { border-color: rgba(52,211,153,.5);  color: var(--success); }
+
+    /* Footer row */
+    .footer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 24px;
+    }
+    .attempts-counter {
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .attempts-counter span {
+      color: var(--text);
+      font-weight: 700;
+    }
+    button.restart-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      padding: 7px 14px;
+      transition: border-color .2s, color .2s;
+    }
+    button.restart-btn:hover { border-color: var(--accent); color: var(--text); }
+
+    @media (max-width: 480px) {
+      .card { padding: 36px 24px 28px; }
+      h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <p class="label">Числова гра</p>
+  <h1>Вгадай число</h1>
+  <p class="subtitle">Загадано число від 1 до 100. Скільки спроб тобі знадобиться?</p>
+
+  <div class="range-bar">
+    <div class="range-fill" id="rangeFill" style="left:0%;right:0%"></div>
+  </div>
+  <div class="range-labels">
+    <span id="rangeMin">1</span>
+    <span id="rangeMax">100</span>
+  </div>
+
+  <div class="input-row" style="margin-top:20px">
+    <input type="number" id="numInput" min="1" max="100" placeholder="?" autocomplete="off">
+    <button class="guess-btn" id="guessBtn" onclick="makeGuess()">Перевірити</button>
+  </div>
+
+  <div class="hint-box" id="hintBox"></div>
+
+  <p class="history-label">Попередні спроби</p>
+  <div class="history" id="history"></div>
+
+  <div class="footer-row">
+    <p class="attempts-counter">Спроби: <span id="attCount">0</span></p>
+    <button class="restart-btn" onclick="restart()">↺ Нова гра</button>
+  </div>
+</div>
+
+<script>
+  let secret, attempts, lo, hi, won;
+
+  function init() {
+    secret   = Math.floor(Math.random() * 100) + 1;
+    attempts = 0;
+    lo = 1; hi = 100;
+    won = false;
+
+    document.getElementById('numInput').value   = '';
+    document.getElementById('numInput').disabled = false;
+    document.getElementById('guessBtn').disabled = false;
+    document.getElementById('attCount').textContent = 0;
+    document.getElementById('history').innerHTML = '';
+    document.getElementById('hintBox').className = 'hint-box';
+    document.getElementById('hintBox').textContent = '';
+    updateRange(1, 100);
+    document.getElementById('numInput').focus();
+  }
+
+  function updateRange(newLo, newHi) {
+    lo = newLo; hi = newHi;
+    document.getElementById('rangeMin').textContent = lo;
+    document.getElementById('rangeMax').textContent = hi;
+    const pct = (v) => ((v - 1) / 99 * 100).toFixed(1);
+    document.getElementById('rangeFill').style.left  = pct(lo) + '%';
+    document.getElementById('rangeFill').style.right = (100 - pct(hi)) + '%';
+  }
+
+  function addChip(num, kind) {
+    const c = document.createElement('span');
+    c.className = 'chip ' + kind;
+    c.textContent = num;
+    document.getElementById('history').prepend(c);
+  }
+
+  function makeGuess() {
+    if (won) return;
+    const input = document.getElementById('numInput');
+    const val = parseInt(input.value, 10);
+
+    if (!input.value.trim() || isNaN(val) || val < 1 || val > 100) {
+      showHint('invalid', '⚠ Введи ціле число від 1 до 100');
+      return;
+    }
+
+    attempts++;
+    document.getElementById('attCount').textContent = attempts;
+    input.value = '';
+
+    if (val > secret) {
+      showHint('higher', `⬇ Задане число менше ${val}`);
+      addChip(val, 'high');
+      if (val < hi) updateRange(lo, val - 1);
+    } else if (val < secret) {
+      showHint('lower', `⬆ Задане число більше ${val}`);
+      addChip(val, 'low');
+      if (val > lo) updateRange(val + 1, hi);
+    } else {
+      showHint('win', `🎉 Вгадав! Число ${secret} — за ${attempts} ${plural(attempts)}`);
+      addChip(val, 'win');
+      document.getElementById('numInput').disabled  = true;
+      document.getElementById('guessBtn').disabled = true;
+      won = true;
+    }
+
+    input.focus();
+  }
+
+  function showHint(cls, msg) {
+    const box = document.getElementById('hintBox');
+    box.className = 'hint-box ' + cls;
+    box.textContent = msg;
+  }
+
+  function plural(n) {
+    if (n % 10 === 1 && n % 100 !== 11) return 'спробу';
+    if ([2,3,4].includes(n % 10) && ![12,13,14].includes(n % 100)) return 'спроби';
+    return 'спроб';
+  }
+
+  function restart() { init(); }
+
+  document.getElementById('numInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') makeGuess();
+  });
+
+  init();
+</script>
+</body>
+</html>

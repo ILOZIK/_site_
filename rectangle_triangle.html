@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Геометричний калькулятор</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .container {
+        width: 900px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        padding: 30px;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .card {
+        background: #f7f9fc;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+        margin-top: 0;
+        color: #444;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 10px;
+        background: #4CAF50;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #45a049;
+    }
+
+    .result {
+        margin-top: 10px;
+        padding: 10px;
+        background: #fff;
+        border-radius: 10px;
+        min-height: 40px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Знайти площу та периметр</h1>
+
+    <div class="grid">
+
+        <!-- Прямокутник -->
+        <div class="card">
+            <h2>Прямокутник</h2>
+
+            <input id="a1" type="number" placeholder="Сторона a">
+            <input id="b1" type="number" placeholder="Сторона b">
+
+            <button onclick="calcRectangle()">Обчислити</button>
+
+            <div class="result" id="rectResult"></div>
+        </div>
+
+        <!-- Трикутник -->
+        <div class="card">
+            <h2>Трикутник</h2>
+
+            <input id="a2" type="number" placeholder="Сторона a">
+            <input id="b2" type="number" placeholder="Сторона b">
+            <input id="c2" type="number" placeholder="Сторона c">
+
+            <button onclick="calcTriangle()">Обчислити</button>
+
+            <div class="result" id="triResult"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function calcRectangle() {
+        let a = +document.getElementById("a1").value;
+        let b = +document.getElementById("b1").value;
+
+        let S = a * b;
+        let P = 2 * (a + b);
+
+        document.getElementById("rectResult").innerHTML =
+            "Площа: " + S + "<br>Периметр: " + P;
+    }
+
+    function calcTriangle() {
+        let a = +document.getElementById("a2").value;
+        let b = +document.getElementById("b2").value;
+        let c = +document.getElementById("c2").value;
+
+        let P = a + b + c;
+        let p = P / 2;
+
+        let S = Math.sqrt(p * (p - a) * (p - b) * (p - c));
+
+        document.getElementById("triResult").innerHTML =
+            "Периметр: " + P + "<br>Площа: " + S.toFixed(2);
+    }
+</script>
+
+</body>
+</html>

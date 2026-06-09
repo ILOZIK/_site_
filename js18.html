@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Номер букви в алфавіті</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 36px 32px 28px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.05);
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #9ca3af;
+      margin-bottom: 6px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 24px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 26px;
+      font-weight: 600;
+      color: #111827;
+      padding: 10px 16px;
+      text-align: center;
+      outline: none;
+      transition: border-color .2s;
+    }
+    input[type="text"]:focus { border-color: #6366f1; }
+    input[type="text"]::placeholder { color: #d1d5db; }
+
+    button.find-btn {
+      background: #6366f1;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 0 20px;
+      transition: background .15s, transform .1s;
+      white-space: nowrap;
+    }
+    button.find-btn:hover  { background: #4f46e5; }
+    button.find-btn:active { transform: scale(.97); }
+
+    .result-box {
+      display: none;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 0;
+      align-items: center;
+      gap: 16px;
+    }
+    .result-box.success {
+      display: flex;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+    }
+    .result-box.error {
+      display: flex;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+    }
+
+    .big-num {
+      font-size: 44px;
+      font-weight: 700;
+      color: #16a34a;
+      line-height: 1;
+      min-width: 48px;
+      text-align: center;
+    }
+    .res-info { display: flex; flex-direction: column; gap: 2px; }
+    .res-main { font-size: 15px; font-weight: 600; color: #15803d; }
+    .res-sub  { font-size: 13px; color: #4b5563; }
+
+    .err-msg { font-size: 14px; font-weight: 500; color: #be123c; }
+
+
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <p class="eyebrow">Інструмент</p>
+  <h1>Номер букви в алфавіті</h1>
+
+  <div class="input-row">
+    <input type="text" id="inp" maxlength="2" placeholder="А" autocomplete="off" spellcheck="false">
+    <button class="find-btn" onclick="find()">Знайти</button>
+  </div>
+
+  <div class="result-box" id="res"></div>
+
+
+</div>
+
+<script>
+  const alpha = [
+    "а","б","в","г","ґ","д","е","є","ж","з",
+    "и","і","ї","й","к","л","м","н","о","п",
+    "р","с","т","у","ф","х","ц","ч","ш","щ",
+    "ь","ю","я"
+  ];
+
+
+  function find() {
+    const raw = document.getElementById('inp').value.trim();
+    const letter = raw.toLowerCase();
+    const res = document.getElementById('res');
+
+    res.className = 'result-box';
+    res.innerHTML = '';
+
+    if (!raw) return;
+
+    const idx = alpha.indexOf(letter);
+    if (idx !== -1) {
+      res.className = 'result-box success';
+      res.innerHTML = `
+        <span class="big-num">${idx + 1}</span>
+        <div class="res-info">
+          <span class="res-main">Буква «${letter.toUpperCase()}»</span>
+          <span class="res-sub">${idx + 1} місце в українському алфавіті</span>
+        </div>`;
+    } else {
+      res.className = 'result-box error';
+      res.innerHTML = `<span class="err-msg">«${raw}» — не українська літера</span>`;
+    }
+  }
+
+  document.getElementById('inp').addEventListener('keydown', e => {
+    if (e.key === 'Enter') find();
+  });
+</script>
+</body>
+</html>

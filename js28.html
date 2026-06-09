@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Сума чисел</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #f5f4f0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: #1a1a1a;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #e0ddd6;
+      border-radius: 16px;
+      padding: 40px 36px;
+      max-width: 440px;
+      width: 100%;
+    }
+    .header { text-align: center; margin-bottom: 28px; }
+    .header i { font-size: 22px; color: #7f77dd; }
+    h1 { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-top: 8px; }
+    .subtitle { font-size: 13px; color: #888780; margin-top: 4px; }
+    label { display: block; font-size: 13px; color: #5f5e5a; margin-bottom: 8px; }
+    .input-row { display: flex; gap: 8px; }
+    input[type=number] {
+      flex: 1;
+      font-size: 20px;
+      text-align: center;
+      padding: 12px 16px;
+      border: 1px solid #d3d1c7;
+      border-radius: 10px;
+      outline: none;
+      background: #faf9f6;
+      color: #1a1a1a;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -moz-appearance: textfield;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type=number]:focus {
+      border-color: #7f77dd;
+      box-shadow: 0 0 0 3px rgba(127, 119, 221, 0.15);
+    }
+    .add-btn {
+      padding: 12px 20px;
+      background: #7f77dd;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .add-btn:hover { background: #534ab7; }
+    .add-btn:active { transform: scale(0.97); }
+    .numbers-box {
+      background: #faf9f6;
+      border: 1px solid #e0ddd6;
+      border-radius: 10px;
+      padding: 14px 16px;
+      min-height: 130px;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 16px;
+    }
+    .numbers-label { font-size: 13px; color: #888780; margin-bottom: 8px; }
+    .number-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      border-bottom: 0.5px solid #e0ddd6;
+      font-size: 15px;
+      color: #1a1a1a;
+    }
+    .number-item:last-child { border-bottom: none; }
+    .number-index { font-size: 12px; color: #b4b2a9; min-width: 20px; }
+    .empty-hint { font-size: 13px; color: #b4b2a9; text-align: center; padding: 20px 0; }
+    .sum-box {
+      background: #eeedfe;
+      border: 1px solid #afa9ec;
+      border-radius: 10px;
+      padding: 18px 16px;
+      text-align: center;
+      margin-top: 16px;
+    }
+    .sum-label { font-size: 13px; color: #534ab7; margin-bottom: 6px; }
+    .sum-value { font-size: 40px; font-weight: 600; color: #3c3489; }
+    .reset-btn {
+      display: block;
+      width: 100%;
+      margin-top: 12px;
+      padding: 10px;
+      background: none;
+      border: 1px solid #d3d1c7;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #5f5e5a;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .reset-btn:hover { background: #f5f4f0; color: #1a1a1a; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <i class="fa-solid fa-plus"></i>
+      <h1>Сума чисел</h1>
+    </div>
+
+    <label for="num">Введіть число</label>
+    <div class="input-row">
+      <input type="number" id="num" step="0.01" placeholder="Наприклад: 25.5" autofocus>
+      <button class="add-btn" onclick="addNumber()">
+        <i class="fa-solid fa-plus"></i> Додати
+      </button>
+    </div>
+
+    <div class="numbers-box">
+      <p class="numbers-label">Введені числа:</p>
+      <div id="numbersList"><p class="empty-hint">Ще немає чисел</p></div>
+    </div>
+
+    <div class="sum-box">
+      <p class="sum-label">Загальна сума</p>
+      <p class="sum-value" id="sum">0</p>
+    </div>
+
+    <button class="reset-btn" onclick="resetAll()">
+      <i class="fa-solid fa-rotate-left"></i> Скинути все
+    </button>
+  </div>
+
+  <script>
+    let sum = 0;
+    let numbers = [];
+
+    function addNumber() {
+      const input = document.getElementById('num');
+      const value = parseFloat(input.value);
+      if (isNaN(value)) { input.focus(); return; }
+
+      numbers.push(value);
+      sum += value;
+
+      const list = document.getElementById('numbersList');
+      list.innerHTML = numbers.map((n, i) =>
+        `<div class="number-item">
+          <span class="number-index">${i + 1}.</span>
+          <span>${n}</span>
+        </div>`
+      ).join('');
+
+      document.getElementById('sum').textContent = parseFloat(sum.toFixed(10)).toString();
+      input.value = '';
+      input.focus();
+    }
+
+    function resetAll() {
+      sum = 0;
+      numbers = [];
+      document.getElementById('numbersList').innerHTML = '<p class="empty-hint">Ще немає чисел</p>';
+      document.getElementById('sum').textContent = '0';
+      document.getElementById('num').focus();
+    }
+
+    document.getElementById('num').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') addNumber();
+    });
+  </script>
+</body>
+</html>
